@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Microsoft.Extensions.PlatformAbstractions;
 
 namespace MusicStore
 {
@@ -29,8 +28,7 @@ namespace MusicStore
             {
                 if (_isWindows == null)
                 {
-                    _isWindows = PlatformServices.Default.Runtime.OperatingSystem.Equals(
-                        "Windows", StringComparison.OrdinalIgnoreCase);
+                    _isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                 }
 
                 return _isWindows.Value;
@@ -43,10 +41,7 @@ namespace MusicStore
             {
                 if (_isMono == null)
                 {
-                    _isMono = string.Equals(
-                        PlatformServices.Default.Runtime.RuntimeType,
-                        "Mono",
-                        StringComparison.OrdinalIgnoreCase);
+                    _isMono = Type.GetType("Mono.Runtime") != null;
                 }
 
                 return _isMono.Value;
@@ -59,7 +54,7 @@ namespace MusicStore
             {
                 if (_isNano == null)
                 {
-                    var osVersion = new Version(PlatformServices.Default.Runtime.OperatingSystemVersion ?? "");
+                    var osVersion = new Version(NativeMethods.Windows.RtlGetVersion() ?? string.Empty);
 
                     try
                     {
